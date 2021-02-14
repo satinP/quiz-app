@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GlobalStyle, Wrapper } from "./AppStyles";
 
 import { getQuizQuestions, Difficulty, QuestionState } from "./api/Api";
 
-import QuestionCard from "./components/QuestionCard";
+import QuestionCard from "./components/QuestionCard/QuestionCard";
+import Select from "./components/Select/Select";
 
 export type Answer = {
   question: string;
@@ -21,19 +22,38 @@ function App() {
   const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(true);
+  const [difficulty, setDifficulty] = useState(Difficulty.EASY);
+  const [showStart, setShowStart] = useState(true);
+
+  const canShowStart = () => {
+    return gameOver || userAnswers.length === TOTAL_QUESTIONS || showStart;
+  };
+
+  const fetchApi = async (total: number, difficulty: Difficulty) => {
+    const newQuestions = await getQuizQuestions(total, difficulty);
+    setQuestions(newQuestions);
+  };
 
   const startQuiz = async () => {
     setLoading(true);
     setGameOver(false);
 
-    const newQuestions = await getQuizQuestions(TOTAL_QUESTIONS, Difficulty.MEDIUM);
+    await fetchApi(TOTAL_QUESTIONS, difficulty);
 
-    setQuestions(newQuestions);
     setScore(0);
     setUserAnswers([]);
     setNumber(0);
     setLoading(false);
-    console.log(newQuestions);
+    setShowStart(false);
+  };
+
+  const changeDifficulty = (event: any) => {
+    const selectedDifficulty = event.target.value;
+
+    if (selectedDifficulty !== difficulty) {
+      setDifficulty(event.target.value);
+      setShowStart(true);
+    }
   };
 
   const checkAnswer = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -72,13 +92,26 @@ function App() {
       <GlobalStyle />
       <Wrapper>
         <h1> Quiz app </h1>
-        {gameOver || userAnswers.length == TOTAL_QUESTIONS ? (
+
+        <Select
+          callback={changeDifficulty}
+          name="difficulty"
+          label="Difficulty: "
+          options={[
+            { value: Difficulty.EASY, label: "EASY" },
+            { value: Difficulty.MEDIUM, label: "MEDIUM" },
+            { value: Difficulty.HARD, label: "HARD" },
+          ]}
+        />
+
+        {canShowStart() ? (
           <button className="start" onClick={startQuiz}>
             Start
           </button>
         ) : (
           ""
         )}
+
         {!gameOver ? <p className="score">Score: {score}</p> : ""}
 
         {loading ? <p>Loading Questions!</p> : ""}

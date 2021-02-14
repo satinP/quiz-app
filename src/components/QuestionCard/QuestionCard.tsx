@@ -1,8 +1,8 @@
 import React from "react";
-import { Answer } from "../App";
+import { Answer } from "../../App";
 import { Wrapper, ButtonWrapper } from "./QuestionCardStyle";
 
-type Props = {
+type QuestionCardProps = {
   question: string;
   answers: Array<string>;
   callback: React.MouseEventHandler;
@@ -11,7 +11,7 @@ type Props = {
   totalQuestions: number;
 };
 
-function QuestionCard(props: Props) {
+function QuestionCard(props: QuestionCardProps) {
   return (
     <Wrapper>
       <p className="number">
