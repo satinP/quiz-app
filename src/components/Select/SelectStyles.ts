@@ -6,8 +6,7 @@ export const Wrapper = styled.div`
 
   select {
     border-radius: 0.8rem;
-    background: var(--color-input-background);
-    border: 1px solid var(--color-line-in-white);
+    text-align-last: center;
     outline: 0;
   }
 
