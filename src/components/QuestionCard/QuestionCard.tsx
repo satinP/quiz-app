@@ -33,7 +33,7 @@ function QuestionCard(props: QuestionCardProps) {
             </ButtonWrapper>
           ))
         ) : (
-          <>No questions available</>
+          <>No Questions Available!</>
         )}
       </div>
     </Wrapper>
